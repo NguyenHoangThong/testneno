@@ -1,0 +1,61 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node:8.9.3
+version: 2
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - run:
+          name: "Versions"
+          command: |
+            node --version
+            npm --version
+            yarn --version
+      - checkout
+      # Download and cache dependencies
+      - restore_cache:
+          key: neon-{{ checksum "package.json" }}
+      - run: npm install
+      - save_cache:
+          key: neon-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+  integration-test:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: neon-{{ checksum "package.json" }}
+      - run: npm run test:integration
+  unit-test:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: neon-{{ checksum "package.json" }}
+      - run: npm run test:unit
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - integration-test:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - unit-test:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: gh-pages
