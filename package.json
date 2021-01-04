@@ -29,7 +29,7 @@
   "browser": "lib/browser.js",
   "types": "src/index.d.ts",
   "dependencies": {
-    "axios": "^0.17.1",
+    "axios": "^0.21.1",
     "bignumber.js": "^5.0.0",
     "bs58": "^4.0.1",
     "bs58check": "^2.1.1",
